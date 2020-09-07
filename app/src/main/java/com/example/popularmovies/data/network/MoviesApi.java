@@ -8,6 +8,7 @@ import com.example.popularmovies.data.models.PopularMovies;
 import java.util.List;
 
 import io.reactivex.Single;
+import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -26,6 +27,10 @@ public interface MoviesApi {
     @GET("movie/{movie_id}")
     Single<MovieDetails> getMovieDetails(@Path(value = "movie_id") Integer movieId,
                                          @Query("api_key") String apiKey);
+
+    @GET("movie/{movie_id}")
+    Single<Response<MovieDetails>> getMovieDetailsResponse(@Path(value = "movie_id") Integer movieId,
+                                                           @Query("api_key") String apiKey);
 
 
 }

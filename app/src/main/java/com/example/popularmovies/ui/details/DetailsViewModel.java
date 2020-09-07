@@ -10,11 +10,15 @@ import com.example.popularmovies.data.DataRepository;
 import com.example.popularmovies.data.models.MovieDetails;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.HttpException;
+import retrofit2.Response;
 
 public class DetailsViewModel extends ViewModel {
 
@@ -30,6 +34,9 @@ public class DetailsViewModel extends ViewModel {
         dataRepository = new DataRepository(context);
     }
 
+    public DetailsViewModel(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
 
     public void isMovieDetailsExist(int movieId) {
 
@@ -59,7 +66,8 @@ public class DetailsViewModel extends ViewModel {
 
                         Log.d(TAG, "onSuccess: getMovieDetailsFromDB movieDetails.isEmpty = " + movieDetails.isEmpty());
 
-                       if (!movieDetails.isEmpty())movieDetailsLiveData.postValue(movieDetails.get(0));
+                        if (!movieDetails.isEmpty())
+                            movieDetailsLiveData.postValue(movieDetails.get(0));
                     }
 
                     @Override
@@ -85,6 +93,11 @@ public class DetailsViewModel extends ViewModel {
 
                     @Override
                     public void onError(Throwable e) {
+                        MovieDetails movieDetails = new MovieDetails();
+                        movieDetails.setStatusMessage(e.getMessage());
+                        movieDetails.setSuccess(false);
+
+                        movieDetailsLiveData.postValue(movieDetails);
                         Log.e(TAG, "onError: getMovieDetails:: " + e.getMessage());
                     }
                 });

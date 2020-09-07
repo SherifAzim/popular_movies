@@ -36,6 +36,9 @@ public class PopularListViewModel extends ViewModel {
         dataRepository = new DataRepository(context);
     }
 
+    public PopularListViewModel(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
 
     public void getPopularMoviesList(int page) {
         Log.d(TAG, "getPopularMoviesList: called");

@@ -17,6 +17,7 @@ import java.util.List;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 
 public class SplashViewModel extends ViewModel {
@@ -25,6 +26,7 @@ public class SplashViewModel extends ViewModel {
     private DataRepository dataRepository;
     private MoviesSharedPreferences sharedPreferences;
     public MutableLiveData<Boolean> getMoviesFromDBIsDone = new MutableLiveData<>();
+
     public SplashViewModel(Application context) {
 
         this.dataRepository = new DataRepository(context);
@@ -32,10 +34,18 @@ public class SplashViewModel extends ViewModel {
         getMoviesFromDBIsDone.postValue(false);
     }
 
+    public SplashViewModel(DataRepository dataRepository, MoviesSharedPreferences sharedPreferences) {
+        this.dataRepository = dataRepository;
+        this.sharedPreferences = sharedPreferences;
+        //getMoviesFromDBIsDone.postValue(false);
+    }
+
     public void getMoviesFromDB() {
 
         dataRepository.getAllMoviesFromDB()
-                .doFinally(() -> getMoviesFromDBIsDone.postValue(true))
+                .doAfterSuccess(movies ->
+                        getMoviesFromDBIsDone.postValue(true)
+                )
                 .subscribe(new SingleObserver<List<Movie>>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -114,5 +124,27 @@ public class SplashViewModel extends ViewModel {
                 e.printStackTrace();
             }
         });
+    }
+
+    //Check if last update time is less one day or it the first time run
+    //if true: 1 - call movies API
+    //         2-  insert movies into database
+    //         3-  update the lastUpdateTime flag
+    //if False: then get the movies form database
+    // and goto popularMoviesActivity
+    public void handleMoviesData(long timeDifference, long updatePeriod) {
+
+        if (timeDifference > updatePeriod) {
+
+            Log.d(TAG, "onCreate: calling updateDBWithLatestData");
+            updateDBWithLatestData();
+            //Update the GOTO
+
+        } else {
+            Log.d(TAG, "onCreate: calling getMoviesFromDB");
+            getMoviesFromDB();
+
+        }
+
     }
 }

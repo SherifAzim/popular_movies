@@ -16,9 +16,9 @@ import com.example.popularmovies.utils.Constants;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 
 public class DataRepository {
 
@@ -30,6 +30,10 @@ public class DataRepository {
     public DataRepository(Application application) {
 
         moviesDatabase = MoviesDatabase.getInstance(application);
+    }
+
+    public DataRepository(MoviesDatabase moviesDatabase) {
+        this.moviesDatabase = moviesDatabase;
     }
 
     public Single<List<Movie>> getAllMoviesFromDB() {
@@ -58,6 +62,12 @@ public class DataRepository {
     public Single<MovieDetails> getMovieDetailsAPI(Integer movieId) {
 
         return apiClient.getMovieDetails(movieId, Constants.api_key);
+
+    }
+
+    public Single<Response<MovieDetails>> getMovieDetailsAPIWithResponse(Integer movieId) {
+
+        return apiClient.getMovieDetailsResponse(movieId, Constants.api_key);
 
     }
 

@@ -18,10 +18,7 @@ import java.util.Date;
 public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = "SplashActivity";
-    private SplashViewModel splashViewModel;
     private ActivitySplashBinding splashBinding;
-
-    private long oneDay =  (60 * 60 * 24);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(splashBinding.getRoot());
 
 
-        splashViewModel = new SplashViewModelFactory(getApplication()).create(SplashViewModel.class);
+        SplashViewModel splashViewModel = new SplashViewModelFactory(getApplication()).create(SplashViewModel.class);
         splashViewModel.initTheLastUpdateTime();
 
 
@@ -49,17 +46,10 @@ public class SplashActivity extends AppCompatActivity {
         //if False: then get the movies form database
         // and goto popularMoviesActivity
 
-        if (timeDifference > oneDay) {
+        long oneDay = (60 * 60 * 24);
+        splashViewModel.handleMoviesData(timeDifference, oneDay);
 
-            Log.d(TAG, "onCreate: calling updateDBWithLatestData");
-            splashViewModel.updateDBWithLatestData();
-            //Update the GOTO
 
-        } else {
-            Log.d(TAG, "onCreate: calling getMoviesFromDB");
-            splashViewModel.getMoviesFromDB();
-
-        }
 
         splashViewModel.getMoviesFromDBIsDone.observe(this, flag -> {
             Log.d(TAG, "onChanged: getMoviesFromDBIsDone called ");

@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 @Entity(tableName = "movie_detail")
-public class MovieDetails {
+public class MovieDetails extends BaseResponse {
 
 
     @PrimaryKey

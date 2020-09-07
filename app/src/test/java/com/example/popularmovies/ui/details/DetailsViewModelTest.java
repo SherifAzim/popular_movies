@@ -14,8 +14,6 @@ import com.example.popularmovies.data.local.MoviesDao;
 import com.example.popularmovies.data.local.MoviesDatabase;
 import com.example.popularmovies.data.models.Movie;
 import com.example.popularmovies.data.models.MovieDetails;
-import com.example.popularmovies.ui.popularlist.PopularListViewModel;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static org.junit.Assert.*;
 
@@ -75,6 +74,22 @@ public class DetailsViewModelTest {
        int actual = LiveDataTestUtil.getOrAwaitValue(detailsViewModel.movieDetailsLiveData).getId();
 
        assertEquals(movieID , actual);
+
+    }
+
+    @Test
+    public void testGetMovieDetailsAPI_notFoundMovieID_getErrorMessage() throws InterruptedException {
+
+        int movieID = 0;
+        detailsViewModel.getMovieDetailsAPI(movieID);
+
+        Boolean success = LiveDataTestUtil.getOrAwaitValue(detailsViewModel.movieDetailsLiveData).getSuccess();
+        String statusMessage = LiveDataTestUtil.getOrAwaitValue(detailsViewModel.movieDetailsLiveData).getStatusMessage();
+
+        assertFalse(success);
+        assertFalse(statusMessage.isEmpty());
+        //HTTP 404 Not Found
+        //assertEquals(statusMessage, "ss");
 
     }
 
